@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="all" />
+<title>Home</title>
+<link rel="stylesheet" href="css/base.css" />
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/highcharts.js"></script>
+<script src="js/highcharts-3d.js"></script>
+<script src="js/highcharts-more.js"></script>
+<script src="js/solid-gauge.js"></script>
+<script src="js/dark-unica.js"></script>
+<script src="js/fss.js"></script>
+<script>
+function getIndexDate() {
+	var date = new Date();
+	var myYear = date.getFullYear().toString();
+	var myMonth = (date.getMonth() + 1).toString();
+	if (myMonth.length == 1) {
+		myMonth = '0' + myMonth;
+	}
+	var myDate = date.getDate().toString();
+	if (myDate.length == 1) {
+		myDate = '0' + myDate;
+	}
+	$('#center_date').text(myYear + '.' + myMonth + '.' + myDate);
+}
+function getIndexTime() {
+	var date = new Date();
+	var myHours = date.getHours().toString();
+	if (myHours.length == 1) {
+		myHours = '0' + myHours;
+	}
+	var myMinutes = date.getMinutes().toString();
+	if (myMinutes.length == 1) {
+		myMinutes = '0' + myMinutes;
+	}
+	var mySeconds = date.getSeconds().toString();
+	if (mySeconds.length == 1) {
+		mySeconds = '0' + mySeconds;
+	}
+	$('#center_time').text(myHours + ':' + myMinutes + ':' + mySeconds);
+}
+$(function() {
+	getIndexDate();
+	getIndexTime();
+	var t1 = window.setInterval(getIndexTime,1);
+	FSS("index_count", "index_count_bg");
+});
+</script>
+</head>
+<body>
+	<div class="index_count" id="index_count">
+		<h1 class="index_title" id="count_title1">持卡总数</h1>
+		<h1 class="index_title" id="count_title2">本日交易流水金额</h1>
+		<h1 class="index_title" id="count_title3">本日充值流水金额</h1>
+		<h1 class="index_title" id="count_title4">本日充值流水金额1</h1>
+		<div id="index_count_bg">
+		</div>
+		<div class="index_connt_con">
+			<p id="count_p1">3198</p>
+			<p id="count_p2">5455652</p>
+			<p id="count_p3">455652</p>
+			<p id="count_p4">4556521</p>
+			<div class="outer"></div>
+			<div class="inner"></div>
+		</div>
+	</div>
+	<div class="pressure_chart">
+		<h1 class="index_title">使用率</h1>
+		<div id="pressure_machine"></div>
+    	<div id="pressure_server"></div>
+		<script>
+		var gaugeOptions = {
+			chart: {
+				type: 'solidgauge',
+				backgroundColor: 'transparent'
+			},
+
+			title: null,
+
+			pane: {
+				center: ['50%', '85%'],
+				size: '130%',
+				startAngle: -90,
+				endAngle: 90,
+				background: {
+				backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+					innerRadius: '60%',
+					outerRadius: '100%',
+					shape: 'arc'
+				}
+			},
+
+			tooltip: {
+				enabled: false
+			},
+
+			yAxis: {
+				stops: [
+					[0.1, '#55BF3B'],
+					[0.7, '#55BF3B'],
+					[0.9, '#DF5353']
+				],
+				lineWidth: 0,
+				minorTickInterval: null,
+				tickAmount: 2,
+				title: {
+					y: -55
+				},
+				labels: {
+					y: 16
+				}
+			},
+
+			plotOptions: {
+				solidgauge: {
+					dataLabels: {
+						y: 5,
+						borderWidth: 0,
+						useHTML: true
+					}
+				}
+			}
+		};
+
+		// The Left
+		var chartSpeed = Highcharts.chart('pressure_machine', Highcharts.merge(gaugeOptions, {
+			yAxis: {
+				min: 0,
+				max: 100,
+				title: {
+					text: '设备'
+				}
+			},
+
+			credits: {
+				enabled: false
+			},
+
+			series: [{
+				name: 'Speed',
+				data: [10],
+				dataLabels: {
+					format: '<div style="position: absolute;top: -38px;left: -15px;text-align: center;"><span style="font-size:24px;color:' +
+					((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span>%</div>'
+				},
+				tooltip: {
+					valueSuffix: ''
+				}
+			}]
+		}));
+
+		// The Right
+		var chartRpm = Highcharts.chart('pressure_server', Highcharts.merge(gaugeOptions, {
+			yAxis: {
+				min: 0,
+				max: 100,
+				title: {
+					text: '服务器'
+				}
+			},
+
+			credits: {
+				enabled: false
+			},
+
+			series: [{
+				name: 'RPM',
+				data: [10],
+				dataLabels: {
+					format: '<div style="position: absolute;top: -38px;left: -15px;text-align: center;"><span style="font-size:24px;color:' +
+				((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span>%</div>'
+				},
+				tooltip: {
+					valueSuffix: ''
+				}
+			}]
+		}));
+
+		// %
+		setInterval(function () {
+			// Left
+			var point,
+			newVal,
+			inc;
+
+			if (chartSpeed) {
+				point = chartSpeed.series[0].points[0];
+				inc = Math.floor(Math.random()*(80-70+1)+70);
+				newVal = inc;
+				point.update(newVal);
+			}
+
+			// Right
+			if (chartRpm) {
+				point = chartRpm.series[0].points[0];
+				inc = Math.floor(Math.random()*(50-30+1)+30);
+				newVal = inc;
+				point.update(newVal);
+				point.update(newVal);
+			}
+		}, 1000);
+	</script>
+	</div>
+	<div class="index_center">
+		<div class="content">
+			<div class="con" id="index_center_char">
+			<script>
+			var chart = Highcharts.chart('index_center_char', {
+				chart: {
+					type: 'column',
+					options3d: {
+						enabled: true,
+						alpha: 0,
+						beta: -5,
+						viewDistance: 25,
+						depth: 40
+					},
+					marginTop: 40,
+					marginRight: 10,
+					backgroundColor: '#162537'
+				},
+				title: {
+					text: '全部设备近七日运行情况概览',
+					style: {
+						'font-size': '16px'
+					}
+				},
+				credits: {
+			        enabled: false
+			    },
+				xAxis: {
+					categories: ['2018.06.21', '2018.06.22', '2018.06.23', '2018.06.24', '2018.06.25', '2018.06.26', '2018.06.27']
+				},
+				yAxis: {
+					allowDecimals: false,
+					min: 0,
+					title: {
+						text: ' '
+					},
+					itemStyle : {
+			        	'fontSize' : '18px'
+				    }
+				},
+				tooltip: {
+					headerFormat: '<b>{point.key}</b><br>',
+					pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: {point.y} / {point.stackTotal}'
+				},
+				plotOptions: {
+					column: {
+						stacking: 'normal',
+						depth: 40
+					}
+				},
+				series: [{
+					name: '正常运行',
+					data: [200, 180, 178, 198, 185, 200, 196],
+					stack: 'ok',
+					color: '#00ccff'
+				}, {
+					name: '状态异常',
+					data: [3, 4, 4, 2, 5, 7, 2],
+					stack: 'nk',
+					color: '#fb1434'
+				}, {
+					name: '停止监控',
+					data: [2, 5, 6, 2, 1, 7, 2],
+					stack: 'nk',
+					color: '#ff9933'
+				}]
+			});
+			</script>
+			</div>
+			<time class="time_con">
+				<span id="center_date"></span>
+				<span id="center_time"></span>
+			</time>
+		</div>
+	</div>
+	<div class="mechine_trend">
+		<h1 class="index_title">设备运行状态走势</h1>
+		<div id="mechine_trend">
+			
+		</div>
+		<script>
+		$('#mechine_trend').bind('mousemove touchmove touchstart', function (e) {
+			var chart,
+				point,
+				i,
+				event;
+			for (i = 0; i < Highcharts.charts.length; i = i + 1) {
+				chart = Highcharts.charts[i];
+				event = chart.pointer.normalize(e.originalEvent);
+				point = chart.series[0].searchPoint(event, true);
+				if (point) {
+			    	point.highlight(e);
+				}
+			}
+		});
+		Highcharts.Pointer.prototype.reset = function () {
+			return undefined;
+		};
+		Highcharts.Point.prototype.highlight = function (event) {
+			event = this.series.chart.pointer.normalize(event);
+			this.onMouseOver();
+			this.series.chart.tooltip.refresh(this);
+			this.series.chart.xAxis[0].drawCrosshair(event, this);
+		};
+		function syncExtremes(e) {
+			var thisChart = this.chart;
+			if (e.trigger !== 'syncExtremes') {
+				Highcharts.each(Highcharts.charts, function (chart) {
+					if (chart !== thisChart) {
+						if (chart.xAxis[0].setExtremes) {
+							chart.xAxis[0].setExtremes(
+								e.min,
+								e.max,
+								undefined,
+								false,
+								{ trigger: 'syncExtremes' }
+							);
+						}
+					}
+				});
+			}
+		}
+
+		$.getJSON(
+			'js/json.json',
+			function (activity) {
+				$.each(activity.datasets, function (i, dataset) {
+					dataset.data = Highcharts.map(dataset.data, function (val, j) {
+					return [activity.xData[j], val];
+				});
+				$('<div class="chart">')
+					.appendTo('#mechine_trend')
+					.highcharts({
+						chart: {
+							marginLeft: 40,
+							spacingTop: 20,
+							spacingBottom: 20,
+							backgroundColor: "#162537"
+						},
+						title: {
+							text: dataset.name,
+							align: 'left',
+							margin: 10,
+							x: 30,
+							style: {
+								'font-size': '16px'
+							}
+						},
+						credits: {
+							enabled: false
+						},
+						legend: {
+							enabled: false
+						},
+						xAxis: {
+							crosshair: true,
+							events: {
+								setExtremes: syncExtremes
+							},
+							labels: {
+								format: '{value}'
+							},
+							categories: ['00:00','01:00','02:00','03:00','04:00','05:00','06:00','07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00']
+						},
+						yAxis: {
+							title: {
+								text: null
+							}
+						},
+						tooltip: {
+							positioner: function () {
+								return {
+									x: this.chart.chartWidth - this.label.width,
+									y: 10 
+								};
+							},
+							borderWidth: 0,
+							backgroundColor: 'none',
+							pointFormat: '{point.y}',
+							headerFormat: '',
+							shadow: false,
+							style: {
+								fontSize: '18px'
+							},
+							valueDecimals: dataset.valueDecimals
+	                    },
+						series: [{
+							data: dataset.data,
+							name: dataset.name,
+							type: dataset.type,
+							color: dataset.color,
+							fillOpacity: 0.3,
+							tooltip: {
+								valueSuffix: ' ' + dataset.unit
+							}
+						}]
+					});
+				});
+			});
+	</script>
+	<div class="mechine_trend_line1"></div>
+	<div class="mechine_trend_line2"></div>
+	<div class="mechine_trend_line3"></div>
+	</div>
+	<div class="index_machine">
+		<ul>
+			<li>
+				<ul class="machine_number_list">
+					<li>80</li>
+					<li>02</li>
+					<li>08</li>
+				</ul>
+				<div class="machine_ico machine_ico1">
+					<span id="machine_ico1_dot"></span>
+					<span id="fingerprint"></span>
+				</div>
+				<h3>考勤机</h3>
+			</li>
+			<li>
+				<ul class="machine_number_list">
+					<li>50</li>
+					<li>00</li>
+					<li>00</li>
+				</ul>
+				<div class="machine_ico machine_ico2">
+
+				</div>
+				<h3>圈存机</h3>
+			</li>
+			<li>
+				<ul class="machine_number_list">
+					<li>10</li>
+					<li>02</li>
+					<li>01</li>
+				</ul>
+				<div class="machine_ico machine_ico3">
+
+				</div>
+				<h3>自助补卡机</h3>
+			</li>
+			<li>
+				<ul class="machine_number_list">
+					<li>20</li>
+					<li>05</li>
+					<li>01</li>
+				</ul>
+				<div class="machine_ico machine_ico4">
+
+				</div>
+				<h3>现金充值机</h3>
+			</li>
+			<li>
+				<ul class="machine_number_list">
+					<li>08</li>
+					<li>00</li>
+					<li>00</li>
+				</ul>
+				<div class="machine_ico machine_ico5">
+
+				</div>
+				<h3>自助一体机</h3>
+			</li>
+			<li>
+				<ul class="machine_number_list">
+					<li>05</li>
+					<li>01</li>
+					<li>01</li>
+				</ul>
+				<div class="machine_ico machine_ico6">
+					<span id="machine_ico6_wifi1"></span>
+					<span id="machine_ico6_wifi2"></span>
+					<span id="machine_ico6_wifi3"></span>
+				</div>
+				<h3>软网关</h3>
+			</li>
+			<li>
+				<ul class="machine_number_list">
+					<li>18</li>
+					<li>00</li>
+					<li>01</li>
+				</ul>
+				<div class="machine_ico machine_ico7">
+					<span id="machine_ico7_line1" class="machine_ico7_line"></span>
+					<span id="machine_ico7_line2" class="machine_ico7_line"></span>
+					<span id="machine_ico7_line3" class="machine_ico7_line"></span>
+					<span id="machine_ico7_line4" class="machine_ico7_line"></span>
+				</div>
+				<h3>硬网关</h3>
+			</li>
+		</ul>
+	</div>
+	<div class="index_server">
+		<h1 class="index_title">服务器运行情况</h1>
+		<ul>
+			<li>
+				<img src="images/server_ico1.png" alt="">
+				<h3>一卡通后台</h3>
+				<div class="server_state server_state_on">
+					<div class="segment">
+						<div id="layer1" class="ball"></div>
+						<div id="layer4" class="pulse"></div>
+					</div>
+					<div class="segment">
+						<div id="layer2" class="ball"></div>
+						<div id="layer5" class="pulse"></div>
+					</div>
+					<div class="segment">
+						<div id="layer3" class="ball"></div>
+						<div id="layer6" class="pulse"></div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<img src="images/server_ico2.png" alt="">
+				<h3>身份服务</h3>
+				<div class="server_state server_state_on">
+					<div class="segment">
+						<div id="layer1" class="ball"></div>
+						<div id="layer4" class="pulse"></div>
+					</div>
+					<div class="segment">
+						<div id="layer2" class="ball"></div>
+						<div id="layer5" class="pulse"></div>
+					</div>
+					<div class="segment">
+						<div id="layer3" class="ball"></div>
+						<div id="layer6" class="pulse"></div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<img src="images/server_ico3.png" alt="">
+				<h3>综合前置机</h3>
+				<div class="server_state server_state_on">
+					<div class="segment">
+						<div id="layer1" class="ball"></div>
+						<div id="layer4" class="pulse"></div>
+					</div>
+					<div class="segment">
+						<div id="layer2" class="ball"></div>
+						<div id="layer5" class="pulse"></div>
+					</div>
+					<div class="segment">
+						<div id="layer3" class="ball"></div>
+						<div id="layer6" class="pulse"></div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<img src="images/server_ico4.png" alt="">
+				<h3>身份前置机</h3>
+				<div class="server_state server_state_on">
+					<div class="segment">
+						<div id="layer1" class="ball"></div>
+						<div id="layer4" class="pulse"></div>
+					</div>
+					<div class="segment">
+						<div id="layer2" class="ball"></div>
+						<div id="layer5" class="pulse"></div>
+					</div>
+					<div class="segment">
+						<div id="layer3" class="ball"></div>
+						<div id="layer6" class="pulse"></div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<img src="images/server_ico5.png" alt="">
+				<h3>门禁子系统</h3>
+				<div class="server_state server_state_off">
+					<div class="segment">
+						<div id="layer1" class="ball"></div>
+						<div id="layer4" class="pulse"></div>
+					</div>
+					<div class="segment">
+						<div id="layer2" class="ball"></div>
+						<div id="layer5" class="pulse"></div>
+					</div>
+					<div class="segment">
+						<div id="layer3" class="ball"></div>
+						<div id="layer6" class="pulse"></div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<img src="images/server_ico6.png" alt="">
+				<h3>高端手持机代理</h3>
+				<div class="server_state server_state_false">
+					<div class="segment">
+						<div id="layer1" class="ball"></div>
+						<div id="layer4" class="pulse"></div>
+					</div>
+					<div class="segment">
+						<div id="layer2" class="ball"></div>
+						<div id="layer5" class="pulse"></div>
+					</div>
+					<div class="segment">
+						<div id="layer3" class="ball"></div>
+						<div id="layer6" class="pulse"></div>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<div class="center_light1"></div>
+	<div class="center_light2"></div>
+	<div class="center_light3"></div>
+</body>
+</html>

@@ -1,2 +1,2 @@
 # monitor
-this is a demo
+静态可视化大屏

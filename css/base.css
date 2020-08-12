@@ -109,7 +109,7 @@ body { width: 1920px;height: 1080px;overflow: hidden;background: url(../images/b
 .time_con span:first-child { margin-right: 108px; }
 
 /* Index Mechine Trend */
-.mechine_trend { z-index: 2;position: absolute;width: 480px;height: 642px;right: 28px;top: 25px;background: url(../images/mechine_trend_bg.png) 0 0 no-repeat; }
+.mechine_trend { z-index: 2;position: absolute;width: 480px;height: 642px;left: 1412px;top: 25px;background: url(../images/mechine_trend_bg.png) 0 0 no-repeat; }
 #mechine_trend { width: 380px;height: 580px;margin: 0 auto;overflow: hidden; }
 
 .chart { width: 380px;height: 190px;margin: 0 auto; }
